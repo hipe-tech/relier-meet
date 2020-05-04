@@ -2,6 +2,7 @@
 
 const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -32,6 +33,9 @@ function getPerformanceHints(size) {
 // jitsi-meet such as app.bundle.js and external_api.js.
 const config = {
     devServer: {
+        historyApiFallback: {
+            index: 'index.html'
+        },
         https: true,
         inline: true,
         proxy: {
@@ -106,8 +110,10 @@ const config = {
 
             test: /\.css$/,
             use: [
+                // 'css-hot-loader',
+                // MiniCssExtractPlugin.loader,
                 'style-loader',
-                'css-loader'
+                'css-loader?-url&-image'
             ]
         }, {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
@@ -156,7 +162,9 @@ const config = {
                 analyzerMode: 'disabled',
                 generateStatsFile: true
             })
-    ].filter(Boolean),
+    ].filter(Boolean).concat([
+
+    ]),
     resolve: {
         alias: {
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
@@ -175,6 +183,11 @@ const config = {
 };
 
 module.exports = [
+    Object.assign({}, config, {
+        entry: {
+            'app.css': './css/all.css'
+        }
+    }),
     Object.assign({}, config, {
         entry: {
             'app.bundle': './app.js'
@@ -284,6 +297,22 @@ function devServerProxyBypass({ path }) {
             || path.startsWith('/sounds/')
             || path.startsWith('/static/')
             || path.endsWith('.wasm')) {
+        return path;
+    }
+
+    // if (path === '/config.js') {
+    //     return path;
+    // }
+
+    if (path === '/interface_config.js') {
+        return path;
+    }
+
+    if (path.endsWith === 'logging_config.js') {
+        return path;
+    }
+
+    if (path === '/' || path.match(/^\/\w+$/)) {
         return path;
     }
 

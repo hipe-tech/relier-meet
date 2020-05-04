@@ -185,11 +185,10 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = 'header-image' />
                     <div className = 'header-text'>
                         <h1 className = 'header-text-title'>
-                            { t('welcomepage.title') }
+                            Start your virtual meeting now!
                         </h1>
                         <p className = 'header-text-description'>
-                            { t('welcomepage.appDescription',
-                                { app: APP_NAME }) }
+                            Build a meaningful collaboration without geographic boundaries, Relier helps you to connect with your coworkers whenever and wherever you are
                         </p>
                     </div>
                     <div id = 'enter_room'>
@@ -222,7 +221,6 @@ class WelcomePage extends AbstractWelcomePage {
                             }
                         </div>
                     </div>
-                    { this._renderTabs() }
                 </div>
                 { showAdditionalContent
                     ? <div

@@ -14,10 +14,10 @@ var interfaceConfig = {
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
-    DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Guest',
+    DEFAULT_LOCAL_DISPLAY_NAME: 'Saya',
+    SHOW_JITSI_WATERMARK: false,
+    JITSI_WATERMARK_LINK: 'https://relier.works',
 
     // if watermark is disabled by default, it can be shown only for guests
     SHOW_WATERMARK_FOR_GUESTS: true,
@@ -28,9 +28,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'Jitsi Meet',
-    NATIVE_APP_NAME: 'Jitsi Meet',
-    PROVIDER_NAME: 'Jitsi',
+    APP_NAME: 'Relier Meet',
+    NATIVE_APP_NAME: 'Relier Meet',
+    PROVIDER_NAME: 'Relier',
     LANG_DETECTION: true, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
@@ -51,7 +51,7 @@ var interfaceConfig = {
         'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
+        'tileview', 'download', 'help', 'mute-everyone',
         'e2ee'
     ],
 
@@ -106,7 +106,7 @@ var interfaceConfig = {
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
     // Documentation reference for the live streaming feature.
-    LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live',
+    LIVE_STREAMING_HELP_LINK: 'https://live.relier.works',
 
     /**
      * Whether the mobile app Jitsi Meet is to be promoted to participants
@@ -129,7 +129,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://community.jitsi.org/',
+    SUPPORT_URL: 'https://forum.relier.works/',
 
     /**
      * Whether the connection indicator icon should hide itself based on
@@ -170,7 +170,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: true,
+    RECENT_LIST_ENABLED: false,
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
