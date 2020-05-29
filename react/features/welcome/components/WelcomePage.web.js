@@ -52,8 +52,7 @@ class WelcomePage extends AbstractWelcomePage {
         this.state = {
             ...this.state,
 
-            generateRoomnames:
-                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
+            generateRoomnames: interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
             selectedTab: 0
         };
 
@@ -85,7 +84,8 @@ class WelcomePage extends AbstractWelcomePage {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalContentTemplate = document.getElementById(
-            'welcome-page-additional-content-template');
+            'welcome-page-additional-content-template'
+        );
 
         /**
          * The template to use as the additional content for the welcome page header toolbar.
@@ -101,11 +101,9 @@ class WelcomePage extends AbstractWelcomePage {
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
-        this._setAdditionalContentRef
-            = this._setAdditionalContentRef.bind(this);
+        this._setAdditionalContentRef = this._setAdditionalContentRef.bind(this);
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
-        this._setAdditionalToolbarContentRef
-            = this._setAdditionalToolbarContentRef.bind(this);
+        this._setAdditionalToolbarContentRef = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
     }
 
@@ -128,7 +126,8 @@ class WelcomePage extends AbstractWelcomePage {
 
         if (this._shouldShowAdditionalContent()) {
             this._additionalContentRef.appendChild(
-                this._additionalContentTemplate.content.cloneNode(true));
+                this._additionalContentTemplate.content.cloneNode(true)
+            );
         }
 
         if (this._shouldShowAdditionalToolbarContent()) {
@@ -158,43 +157,40 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { t } = this.props;
-        const { APP_NAME } = interfaceConfig;
+
+        // const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();
 
         return (
             <div
-                className = { `welcome ${showAdditionalContent
-                    ? 'with-content' : 'without-content'}` }
+                className = { `welcome ${showAdditionalContent ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
                     <Watermarks />
                 </div>
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
-                        <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR } />
-                        { showAdditionalToolbarContent
-                            ? <div
+                        <SettingsButton defaultTab = { SETTINGS_TABS.CALENDAR } />
+                        {showAdditionalToolbarContent ? (
+                            <div
                                 className = 'settings-toolbar-content'
                                 ref = { this._setAdditionalToolbarContentRef } />
-                            : null
-                        }
+                        ) : null}
                     </div>
                     <div className = 'header-image' />
                     <div className = 'header-text'>
-                        <h1 className = 'header-text-title'>
-                            Start your virtual meeting now!
-                        </h1>
+                        <h1 className = 'header-text-title'>Start your virtual meeting now!</h1>
                         <p className = 'header-text-description'>
-                            Build a meaningful collaboration without geographic boundaries, Relier helps you to connect with your coworkers whenever and wherever you are
+                            Build a meaningful collaboration without geographic boundaries, Relier
+                            helps you to connect with your coworkers whenever and wherever you are
                         </p>
                     </div>
                     <div id = 'enter_room'>
                         <div className = 'enter-room-input-container'>
                             <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
+                                {t('welcomepage.enterRoomTitle')}
                             </div>
                             <form onSubmit = { this._onFormSubmit }>
                                 <input
@@ -214,19 +210,15 @@ class WelcomePage extends AbstractWelcomePage {
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
                             onClick = { this._onFormSubmit }>
-                            {
-                                showResponsiveText
-                                    ? t('welcomepage.goSmall')
-                                    : t('welcomepage.go')
-                            }
+                            {showResponsiveText ? t('welcomepage.goSmall') : t('welcomepage.go')}
                         </div>
                     </div>
                 </div>
-                { showAdditionalContent
+                {showAdditionalContent
                     ? <div
                         className = 'welcome-page-content'
                         ref = { this._setAdditionalContentRef } />
-                    : null }
+                    : null}
             </div>
         );
     }
@@ -309,7 +301,8 @@ class WelcomePage extends AbstractWelcomePage {
             <Tabs
                 onSelect = { this._onTabSelected }
                 selected = { this.state.selectedTab }
-                tabs = { tabs } />);
+                tabs = { tabs } />
+        );
     }
 
     /**
@@ -358,10 +351,12 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {boolean}
      */
     _shouldShowAdditionalContent() {
-        return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
+        return (
+            interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
             && this._additionalContentTemplate
             && this._additionalContentTemplate.content
-            && this._additionalContentTemplate.innerHTML.trim();
+            && this._additionalContentTemplate.innerHTML.trim()
+        );
     }
 
     /**
@@ -372,10 +367,12 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {boolean}
      */
     _shouldShowAdditionalToolbarContent() {
-        return interfaceConfig.DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT
+        return (
+            interfaceConfig.DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT
             && this._additionalToolbarContentTemplate
             && this._additionalToolbarContentTemplate.content
-            && this._additionalToolbarContentTemplate.innerHTML.trim();
+            && this._additionalToolbarContentTemplate.innerHTML.trim()
+        );
     }
 
     /**
@@ -390,7 +387,6 @@ class WelcomePage extends AbstractWelcomePage {
 
         return innerWidth <= WINDOW_WIDTH_THRESHOLD;
     }
-
 }
 
 export default translate(connect(_mapStateToProps)(WelcomePage));

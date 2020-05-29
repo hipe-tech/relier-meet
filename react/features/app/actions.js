@@ -23,15 +23,11 @@ import {
 import { showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
-import {
-    getDefaultURL,
-    getName
-} from './functions';
+import { getDefaultURL, getName } from './functions';
 import logger from './logger';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
-
 
 /**
  * Triggers an in-app navigation to a specific route. Allows navigation to be
@@ -57,8 +53,7 @@ export function appNavigate(uri: ?string) {
                 // FIXME Turn location's host, hostname, and port properties into
                 // setters in order to reduce the risks of inconsistent state.
                 location.hostname = defaultLocation.hostname;
-                location.pathname
-                    = defaultLocation.pathname + location.pathname.substr(1);
+                location.pathname = defaultLocation.pathname + location.pathname.substr(1);
                 location.port = defaultLocation.port;
                 location.protocol = defaultLocation.protocol;
             } else {
@@ -127,6 +122,7 @@ export function appNavigate(uri: ?string) {
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
         dispatch(setRoom(room));
+        console.log('room logger: ', room, config, locationURL);
 
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
@@ -172,8 +168,7 @@ export function redirectToStaticPage(pathname: string) {
             // A pathname equal to ./ specifies the current directory. It will be
             // fine but pointless to include it because contextRoot is the current
             // directory.
-            newPathname.startsWith('./')
-                && (newPathname = newPathname.substring(2));
+            newPathname.startsWith('./') && (newPathname = newPathname.substring(2));
             newPathname = getLocationContextRoot(windowLocation) + newPathname;
         }
 
@@ -216,8 +211,7 @@ export function reloadWithStoredParams() {
 
         windowLocation.replace(locationURL.toString());
 
-        if (window.self !== window.top
-            && locationURL.search === oldSearchString) {
+        if (window.self !== window.top && locationURL.search === oldSearchString) {
             // NOTE: Assuming that only the hash or search part of the URL will
             // be changed!
             // location.reload will not trigger redirect/reload for iframe when
@@ -243,10 +237,7 @@ export function reloadWithStoredParams() {
  */
 export function maybeRedirectToWelcomePage(options: Object = {}) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-
-        const {
-            enableClosePage
-        } = getState()['features/base/config'];
+        const { enableClosePage } = getState()['features/base/config'];
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
@@ -271,10 +262,12 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // else: show thankYou dialog only if there is no feedback
         if (options.showThankYou) {
-            dispatch(showNotification({
-                titleArguments: { appName: getName() },
-                titleKey: 'dialog.thankYou'
-            }));
+            dispatch(
+                showNotification({
+                    titleArguments: { appName: getName() },
+                    titleKey: 'dialog.thankYou'
+                })
+            );
         }
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if
@@ -284,7 +277,8 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
                 () => {
                     dispatch(redirectWithStoredParams('/'));
                 },
-                options.showThankYou ? 3000 : 500);
+                options.showThankYou ? 3000 : 500
+            );
         }
     };
 }

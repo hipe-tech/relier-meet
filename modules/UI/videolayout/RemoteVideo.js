@@ -8,13 +8,8 @@ import { I18nextProvider } from 'react-i18next';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 
 import { i18next } from '../../../react/features/base/i18n';
-import {
-    JitsiParticipantConnectionStatus
-} from '../../../react/features/base/lib-jitsi-meet';
-import {
-    getPinnedParticipant,
-    pinParticipant
-} from '../../../react/features/base/participants';
+import { JitsiParticipantConnectionStatus } from '../../../react/features/base/lib-jitsi-meet';
+import { getPinnedParticipant, pinParticipant } from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
@@ -24,7 +19,6 @@ import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout'
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 
 import SmallVideo from './SmallVideo';
 import UIUtils from '../util/UIUtil';
@@ -49,10 +43,8 @@ function createContainer(spanId) {
         <div class ='presence-label-container'></div>
         <span class = 'remotevideomenu'></span>`;
 
-    const remoteVideosContainer
-        = document.getElementById('filmstripRemoteVideosContainer');
-    const localVideoContainer
-        = document.getElementById('localVideoTileViewContainer');
+    const remoteVideosContainer = document.getElementById('filmstripRemoteVideosContainer');
+    const localVideoContainer = document.getElementById('localVideoTileViewContainer');
 
     remoteVideosContainer.insertBefore(container, localVideoContainer);
 
@@ -79,7 +71,9 @@ export default class RemoteVideo extends SmallVideo {
 
         this._audioStreamElement = null;
         this._supportsRemoteControl = false;
-        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left bottom' : 'top center';
+        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
+            ? 'left bottom'
+            : 'top center';
         this.addRemoteVideoContainer();
         this.updateIndicators();
         this.updateDisplayName();
@@ -112,8 +106,7 @@ export default class RemoteVideo extends SmallVideo {
         // Bind event handlers so they are only bound once for every instance.
         // TODO The event handlers should be turned into actions so changes can be
         // handled through reducers and middleware.
-        this._requestRemoteControlPermissions
-            = this._requestRemoteControlPermissions.bind(this);
+        this._requestRemoteControlPermissions = this._requestRemoteControlPermissions.bind(this);
         this._setAudioVolume = this._setAudioVolume.bind(this);
         this._stopRemoteControl = this._stopRemoteControl.bind(this);
 
@@ -159,8 +152,7 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        const remoteVideoMenuContainer
-            = this.container.querySelector('.remotevideomenu');
+        const remoteVideoMenuContainer = this.container.querySelector('.remotevideomenu');
 
         if (!remoteVideoMenuContainer) {
             return;
@@ -170,9 +162,11 @@ export default class RemoteVideo extends SmallVideo {
         let remoteControlState = null;
         let onRemoteControlToggle;
 
-        if (this._supportsRemoteControl
+        if (
+            this._supportsRemoteControl
             && ((!APP.remoteControl.active && !this._isRemoteControlSessionActive)
-                || APP.remoteControl.controller.activeParticipant === this.id)) {
+                || APP.remoteControl.controller.activeParticipant === this.id)
+        ) {
             if (controller.getRequestedParticipant() === this.id) {
                 remoteControlState = REMOTE_CONTROL_MENU_STATES.REQUESTING;
             } else if (controller.isStarted()) {
@@ -187,8 +181,9 @@ export default class RemoteVideo extends SmallVideo {
         const initialVolumeValue = this._audioStreamElement && this._audioStreamElement.volume;
 
         // hide volume when in silent mode
-        const onVolumeChange
-            = APP.store.getState()['features/base/config'].startSilent ? undefined : this._setAudioVolume;
+        const onVolumeChange = APP.store.getState()['features/base/config'].startSilent
+            ? undefined
+            : this._setAudioVolume;
         const participantID = this.id;
         const currentLayout = getCurrentLayout(APP.store.getState());
         let remoteMenuPosition;
@@ -209,8 +204,7 @@ export default class RemoteVideo extends SmallVideo {
                             initialVolumeValue = { initialVolumeValue }
                             isAudioMuted = { this.isAudioMuted }
                             menuPosition = { remoteMenuPosition }
-                            onMenuDisplay
-                                = {this._onRemoteVideoMenuDisplay.bind(this)}
+                            onMenuDisplay = { this._onRemoteVideoMenuDisplay.bind(this) }
                             onRemoteControlToggle = { onRemoteControlToggle }
                             onVolumeChange = { onVolumeChange }
                             participantID = { participantID }
@@ -218,7 +212,8 @@ export default class RemoteVideo extends SmallVideo {
                     </AtlasKitThemeProvider>
                 </I18nextProvider>
             </Provider>,
-            remoteVideoMenuContainer);
+            remoteVideoMenuContainer
+        );
     }
 
     /**
@@ -256,36 +251,50 @@ export default class RemoteVideo extends SmallVideo {
      * Requests permissions for remote control session.
      */
     _requestRemoteControlPermissions() {
-        APP.remoteControl.controller.requestPermissions(this.id, this.VideoLayout.getLargeVideoWrapper())
-            .then(result => {
-                if (result === null) {
-                    return;
-                }
-                this.updateRemoteVideoMenu();
-                APP.UI.messageHandler.notify(
-                    'dialog.remoteControlTitle',
-                    result === false ? 'dialog.remoteControlDeniedMessage' : 'dialog.remoteControlAllowedMessage',
-                    { user: this.user.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME }
-                );
-                if (result === true) {
-                    // the remote control permissions has been granted
-                    // pin the controlled participant
-                    const pinnedParticipant = getPinnedParticipant(APP.store.getState()) || {};
-                    const pinnedId = pinnedParticipant.id;
-
-                    if (pinnedId !== this.id) {
-                        APP.store.dispatch(pinParticipant(this.id));
+        APP.remoteControl.controller
+            .requestPermissions(this.id, this.VideoLayout.getLargeVideoWrapper())
+            .then(
+                result => {
+                    if (result === null) {
+                        return;
                     }
+                    this.updateRemoteVideoMenu();
+                    APP.UI.messageHandler.notify(
+                        'dialog.remoteControlTitle',
+                        result === false
+                            ? 'dialog.remoteControlDeniedMessage'
+                            : 'dialog.remoteControlAllowedMessage',
+                        {
+                            user:
+                                this.user.getDisplayName()
+                                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
+                        }
+                    );
+                    if (result === true) {
+                        // the remote control permissions has been granted
+                        // pin the controlled participant
+                        const pinnedParticipant = getPinnedParticipant(APP.store.getState()) || {};
+                        const pinnedId = pinnedParticipant.id;
+
+                        if (pinnedId !== this.id) {
+                            APP.store.dispatch(pinParticipant(this.id));
+                        }
+                    }
+                },
+                error => {
+                    logger.error(error);
+                    this.updateRemoteVideoMenu();
+                    APP.UI.messageHandler.notify(
+                        'dialog.remoteControlTitle',
+                        'dialog.remoteControlErrorMessage',
+                        {
+                            user:
+                                this.user.getDisplayName()
+                                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
+                        }
+                    );
                 }
-            }, error => {
-                logger.error(error);
-                this.updateRemoteVideoMenu();
-                APP.UI.messageHandler.notify(
-                    'dialog.remoteControlTitle',
-                    'dialog.remoteControlErrorMessage',
-                    { user: this.user.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME }
-                );
-            });
+            );
         this.updateRemoteVideoMenu();
     }
 
@@ -402,10 +411,13 @@ export default class RemoteVideo extends SmallVideo {
     isVideoPlayable() {
         const connectionState = APP.conference.getParticipantConnectionStatus(this.id);
 
-        return super.isVideoPlayable()
+        return (
+            super.isVideoPlayable()
             && this._canPlayEventReceived
             && (connectionState === JitsiParticipantConnectionStatus.ACTIVE
-                || (connectionState === JitsiParticipantConnectionStatus.INTERRUPTED && !this.mutedWhileDisconnected));
+                || (connectionState === JitsiParticipantConnectionStatus.INTERRUPTED
+                    && !this.mutedWhileDisconnected))
+        );
     }
 
     /**
@@ -560,7 +572,8 @@ export default class RemoteVideo extends SmallVideo {
                             className = 'presence-label' />
                     </I18nextProvider>
                 </Provider>,
-                presenceLabelContainer);
+                presenceLabelContainer
+            );
         }
     }
 

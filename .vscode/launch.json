@@ -6,9 +6,19 @@
     "configurations": [
         {
             "type": "chrome",
+            "request": "attach",
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "url": "https://localhost:8080",
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "https://localhost:8080",
+            // "sourceMaps": true,
             "webRoot": "${workspaceFolder}"
         }
     ]

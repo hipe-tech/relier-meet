@@ -26,9 +26,7 @@ type State = {
 /**
  * Stateless "mute/unmute audio" button for the Always-on-Top windows.
  */
-export default class AudioMuteButton
-    extends AbstractAudioMuteButton<Props, State> {
-
+export default class AudioMuteButton extends AbstractAudioMuteButton<Props, State> {
     accessibilityLabel = 'Audio mute';
 
     /**
@@ -46,8 +44,7 @@ export default class AudioMuteButton
         };
 
         // Bind event handlers so they are only bound once per instance.
-        this._audioAvailabilityListener
-            = this._audioAvailabilityListener.bind(this);
+        this._audioAvailabilityListener = this._audioAvailabilityListener.bind(this);
         this._audioMutedListener = this._audioMutedListener.bind(this);
     }
 
@@ -61,15 +58,13 @@ export default class AudioMuteButton
         api.on('audioAvailabilityChanged', this._audioAvailabilityListener);
         api.on('audioMuteStatusChanged', this._audioMutedListener);
 
-        Promise.all([
-            api.isAudioAvailable(),
-            api.isAudioMuted()
-        ])
+        Promise.all([ api.isAudioAvailable(), api.isAudioMuted() ])
             .then(([ audioAvailable, audioMuted ]) =>
                 this.setState({
                     audioAvailable,
                     audioMuted
-                }))
+                })
+            )
             .catch(console.error);
     }
 
@@ -80,12 +75,8 @@ export default class AudioMuteButton
      * @returns {void}
      */
     componentWillUnmount() {
-        api.removeListener(
-            'audioAvailabilityChanged',
-            this._audioAvailabilityListener);
-        api.removeListener(
-            'audioMuteStatusChanged',
-            this._audioMutedListener);
+        api.removeListener('audioAvailabilityChanged', this._audioAvailabilityListener);
+        api.removeListener('audioMuteStatusChanged', this._audioMutedListener);
     }
 
     _audioAvailabilityListener: ({ available: boolean }) => void;
@@ -142,7 +133,10 @@ export default class AudioMuteButton
      * @protected
      * @returns {void}
      */
-    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
+    _setAudioMuted(
+            audioMuted: boolean // eslint-disable-line no-unused-vars
+    ) {
+        // eslint-disable-line no-unused-vars
         this.state.audioAvailable && api.executeCommand('toggleAudio');
     }
 }

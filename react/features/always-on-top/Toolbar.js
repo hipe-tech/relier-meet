@@ -40,11 +40,7 @@ export default class Toolbar extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            className = '',
-            onMouseOut,
-            onMouseOver
-        } = this.props;
+        const { className = '', onMouseOut, onMouseOver } = this.props;
 
         return (
             <div

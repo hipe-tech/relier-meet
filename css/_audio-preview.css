@@ -1,7 +1,7 @@
 .audio-preview {
     &-content {
         font-size: 15px;
-        line-height: 24px;
+        line-height: 15px;
         max-height: 456px;
         overflow: auto;
         width: 328px;
@@ -13,7 +13,7 @@
         padding: 16px;
 
         &-icon {
-            color: #A4B8D1;
+            color: #a4b8d1;
             display: inline-block;
         }
 
@@ -32,7 +32,7 @@
         margin-left: 48px;
 
         &--selected {
-            background: rgba(28,32,37,0.5);
+            background: rgba(28, 32, 37, 0.5);
             cursor: initial;
             margin-left: 0;
             padding-left: 21px;
@@ -55,7 +55,7 @@
 
         &:hover {
             .audio-preview-entry {
-                background: rgba(255,255,255, 0.2);
+                background: rgba(255, 255, 255, 0.2);
                 margin-left: 0;
                 padding-left: 48px;
 
@@ -82,35 +82,34 @@
         position: relative;
     }
 
-
     &-icon {
         border-radius: 50%;
         display: inline-block;
         width: 14px;
 
         & svg {
-            fill: #1C2025;
+            fill: #1c2025;
         }
 
         &--check {
-            background: #31B76A;
+            background: #31b76a;
             margin-right: 13px;
         }
 
         &--exclamation {
             margin-left: 6px;
             & svg {
-                fill: #E54B4B;
+                fill: #e54b4b;
             }
         }
     }
 
     &-test-button {
         display: none;
-        background: #FFF;
-        border: 1px solid #D1DBE8;
+        background: #fff;
+        border: 1px solid #d1dbe8;
         border-radius: 3px;
-        color: #1C2025;
+        color: #1c2025;
         cursor: pointer;
         font-weight: 600;
         font-size: 15px;
@@ -127,7 +126,7 @@
         top: 18px;
     }
 
-   // Override @atlaskit/InlineDialog container which is made with styled components
+    // Override @atlaskit/InlineDialog container which is made with styled components
     & > div > div:nth-child(2) > div > div {
         outline: none;
         padding: 0;

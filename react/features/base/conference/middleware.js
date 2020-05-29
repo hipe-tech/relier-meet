@@ -21,12 +21,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
-import {
-    conferenceFailed,
-    conferenceWillLeave,
-    createConference,
-    setSubject
-} from './actions';
+import { conferenceFailed, conferenceWillLeave, createConference, setSubject } from './actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -111,14 +106,11 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/conference'],
     /* listener */ (currentState, store, previousState = {}) => {
-        const {
-            conference,
-            maxReceiverVideoQuality,
-            preferredVideoQuality
-        } = currentState;
+        const { conference, maxReceiverVideoQuality, preferredVideoQuality } = currentState;
         const changedPreferredVideoQuality
             = preferredVideoQuality !== previousState.preferredVideoQuality;
-        const changedMaxVideoQuality = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
+        const changedMaxVideoQuality
+            = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
 
         if (changedPreferredVideoQuality || changedMaxVideoQuality) {
             _setReceiverVideoConstraint(conference, preferredVideoQuality, maxReceiverVideoQuality);
@@ -126,7 +118,8 @@ StateListenerRegistry.register(
         if (changedPreferredVideoQuality) {
             _setSenderVideoConstraint(conference, preferredVideoQuality);
         }
-    });
+    }
+);
 
 /**
  * Makes sure to leave a failed conference in order to release any allocated
@@ -205,9 +198,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     };
     window.addEventListener('beforeunload', beforeUnloadHandler);
 
-    if (requireDisplayName
-        && !getLocalParticipant(getState)?.name
-        && !conference.isHidden()) {
+    if (requireDisplayName && !getLocalParticipant(getState)?.name && !conference.isHidden()) {
         dispatch(openDisplayNamePrompt(undefined));
     }
 
@@ -279,8 +270,7 @@ function _connectionFailed({ dispatch, getState }, next, action) {
                 // connectionFailed is always an object with .name property.
                 // This fact needs to be checked prior to enabling this logic on
                 // web.
-                const conferenceAction
-                    = conferenceFailed(conference, error.name);
+                const conferenceAction = conferenceFailed(conference, error.name);
 
                 // Copy the recoverable flag if set on the CONNECTION_FAILED
                 // action to not emit recoverable action caused by
@@ -373,7 +363,7 @@ function _pinParticipant({ getState }, next, action) {
     const actionName = id ? ACTION_PINNED : ACTION_UNPINNED;
     const local
         = (participantById && participantById.local)
-            || (!id && pinnedParticipant && pinnedParticipant.local);
+        || (!id && pinnedParticipant && pinnedParticipant.local);
     let participantIdForEvent;
 
     if (local) {
@@ -383,13 +373,12 @@ function _pinParticipant({ getState }, next, action) {
             = actionName === ACTION_PINNED ? id : pinnedParticipant && pinnedParticipant.id;
     }
 
-    sendAnalytics(createPinnedEvent(
-        actionName,
-        participantIdForEvent,
-        {
+    sendAnalytics(
+        createPinnedEvent(actionName, participantIdForEvent, {
             local,
             'participant_count': conference.getParticipantCount()
-        }));
+        })
+    );
 
     return next(action);
 }
@@ -447,10 +436,9 @@ function _setReceiverVideoConstraint(conference, preferred, max) {
  */
 function _setSenderVideoConstraint(conference, preferred) {
     if (conference) {
-        conference.setSenderVideoConstraint(preferred)
-            .catch(err => {
-                logger.error(`Changing sender resolution to ${preferred} failed - ${err} `);
-            });
+        conference.setSenderVideoConstraint(preferred).catch(err => {
+            logger.error(`Changing sender resolution to ${preferred} failed - ${err} `);
+        });
     }
 }
 
@@ -520,16 +508,11 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _syncReceiveVideoQuality({ getState }, next, action) {
-    const {
-        conference,
-        maxReceiverVideoQuality,
-        preferredVideoQuality
-    } = getState()['features/base/conference'];
+    const { conference, maxReceiverVideoQuality, preferredVideoQuality } = getState()[
+        'features/base/conference'
+    ];
 
-    _setReceiverVideoConstraint(
-        conference,
-        preferredVideoQuality,
-        maxReceiverVideoQuality);
+    _setReceiverVideoConstraint(conference, preferredVideoQuality, maxReceiverVideoQuality);
 
     return next(action);
 }
@@ -555,9 +538,7 @@ function _trackAddedOrRemoved(store, next, action) {
     // Since we swap the tracks for the web client in conference.js, ignore
     // presenter tracks here and do not add/remove them to/from the conference.
     if (track && track.local && track.mediaType !== MEDIA_TYPE.PRESENTER) {
-        return (
-            _syncConferenceLocalTracksWithState(store, action)
-                .then(() => next(action)));
+        return _syncConferenceLocalTracksWithState(store, action).then(() => next(action));
     }
 
     return next(action);

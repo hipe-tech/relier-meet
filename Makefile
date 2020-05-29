@@ -80,9 +80,10 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
-
-dev-server-only: deploy-css
 	$(WEBPACK_DEV_SERVER)
+dev-server-only: 
+	$(WEBPACK_DEV_SERVER)
+	
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

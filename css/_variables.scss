@@ -1,10 +1,10 @@
-@import "themes/light";
+@import 'themes/light';
 
 /**
  * Style variables
  */
-$baseFontFamily: "Poppins", -apple-system, BlinkMacSystemFont, "open_sanslight",
-    "Helvetica Neue", Helvetica, Arial, sans-serif;
+$baseFontFamily: 'Poppins', -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue',
+    Helvetica, Arial, sans-serif;
 $hangupColor: #bf2117;
 $hangupFontSize: 2em;
 
@@ -101,7 +101,7 @@ $sidebarWidth: 375px;
  * Misc.
  */
 $borderRadius: 4px;
-$defaultWatermarkLink: "../images/logo.png";
+$defaultWatermarkLink: '../images/logo.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
@@ -169,14 +169,9 @@ $watermarkHeight: 74px;
  */
 $welcomePageDescriptionColor: #2ba790;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(
-    -90deg,
-    #fff 0%,
-    #fff 50%,
-    #fff 100%
-);
+$welcomePageBackground: linear-gradient(-90deg, #fff 0%, #fff 50%, #fff 100%);
 
-$welcomePageTitleColor:#248e7b;
+$welcomePageTitleColor: #248e7b;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
@@ -208,12 +203,7 @@ $welcomePageEnterRoomBorderRadius: 0px;
 $welcomePageEnterRoomInputContainerPadding: 0 8px 5px 0px;
 $welcomePageEnterRoomInputContainerBorderWidth: 0px 0px 2px 0px;
 $welcomePageEnterRoomInputContainerBorderStyle: solid;
-$welcomePageEnterRoomInputContainerBorderImage: linear-gradient(
-        to right,
-        #dee1e6,
-        #fff
-    )
-    1;
+$welcomePageEnterRoomInputContainerBorderImage: linear-gradient(to right, #dee1e6, #fff) 1;
 
 $welcomePageEnterRoomTitleDisplay: inherit;
 

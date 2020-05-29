@@ -1,8 +1,12 @@
 /* global __dirname */
 
 const process = require('process');
+const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -14,8 +18,7 @@ const devServerProxyTarget
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 
 const minimize
-    = process.argv.indexOf('-p') !== -1
-        || process.argv.indexOf('--optimize-minimize') !== -1;
+    = process.argv.indexOf('-p') !== -1 || process.argv.indexOf('--optimize-minimize') !== -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -32,10 +35,14 @@ function getPerformanceHints(size) {
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
 const config = {
+    // devtool: false,
     devServer: {
         historyApiFallback: {
-            index: 'index.html'
+            index: '/libs/index-webpack.html'
         },
+        index: '/libs/index-webpack.html',
+        hot: true,
+        liveReload: false,
         https: true,
         inline: true,
         proxy: {
@@ -52,93 +59,100 @@ const config = {
     devtool: 'source-map',
     mode: minimize ? 'production' : 'development',
     module: {
-        rules: [ {
-            // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
-            // as well.
+        rules: [
+            {
+                // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
+                // as well.
 
-            exclude: [
-                new RegExp(`${__dirname}/node_modules/(?!js-utils)`)
-            ],
-            loader: 'babel-loader',
-            options: {
-                // XXX The require.resolve bellow solves failures to locate the
-                // presets when lib-jitsi-meet, for example, is npm linked in
-                // jitsi-meet.
-                plugins: [
-                    require.resolve('@babel/plugin-transform-flow-strip-types'),
-                    require.resolve('@babel/plugin-proposal-class-properties'),
-                    require.resolve('@babel/plugin-proposal-export-default-from'),
-                    require.resolve('@babel/plugin-proposal-export-namespace-from'),
-                    require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
-                    require.resolve('@babel/plugin-proposal-optional-chaining')
-                ],
-                presets: [
-                    [
-                        require.resolve('@babel/preset-env'),
-
-                        // Tell babel to avoid compiling imports into CommonJS
-                        // so that webpack may do tree shaking.
-                        {
-                            modules: false,
-
-                            // Specify our target browsers so no transpiling is
-                            // done unnecessarily. For browsers not specified
-                            // here, the ES2015+ profile will be used.
-                            targets: {
-                                chrome: 58,
-                                electron: 2,
-                                firefox: 54,
-                                safari: 11
-                            }
-
-                        }
+                exclude: [ new RegExp(`${__dirname}/node_modules/(?!js-utils)`) ],
+                loader: 'babel-loader',
+                options: {
+                    // XXX The require.resolve bellow solves failures to locate the
+                    // presets when lib-jitsi-meet, for example, is npm linked in
+                    // jitsi-meet.
+                    plugins: [
+                        require.resolve('@babel/plugin-transform-flow-strip-types'),
+                        require.resolve('@babel/plugin-proposal-class-properties'),
+                        require.resolve('@babel/plugin-proposal-export-default-from'),
+                        require.resolve('@babel/plugin-proposal-export-namespace-from'),
+                        require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
+                        require.resolve('@babel/plugin-proposal-optional-chaining')
                     ],
-                    require.resolve('@babel/preset-flow'),
-                    require.resolve('@babel/preset-react')
+                    presets: [
+                        [
+                            require.resolve('@babel/preset-env'),
+
+                            // Tell babel to avoid compiling imports into CommonJS
+                            // so that webpack may do tree shaking.
+                            {
+                                modules: false,
+
+                                // Specify our target browsers so no transpiling is
+                                // done unnecessarily. For browsers not specified
+                                // here, the ES2015+ profile will be used.
+                                targets: {
+                                    chrome: 58,
+                                    electron: 2,
+                                    firefox: 54,
+                                    safari: 11
+                                }
+                            }
+                        ],
+                        require.resolve('@babel/preset-flow'),
+                        require.resolve('@babel/preset-react')
+                    ]
+                },
+                test: /\.jsx?$/
+            },
+            {
+                // Expose jquery as the globals $ and jQuery because it is expected
+                // to be available in such a form by multiple jitsi-meet
+                // dependencies including lib-jitsi-meet.
+
+                loader: 'expose-loader?$!expose-loader?jQuery',
+                test: /\/node_modules\/jquery\/.*\.js$/
+            },
+            {
+                test: /\.(sa|sc|c)ss$/,
+                exclude: /node_modules/,
+                use: [
+                    'style-loader',
+                    MiniCssExtractPlugin.loader,
+                    'css-loader?-url&-image',
+
+                    // 'postcss-loader',
+                    'sass-loader'
                 ]
             },
-            test: /\.jsx?$/
-        }, {
-            // Expose jquery as the globals $ and jQuery because it is expected
-            // to be available in such a form by multiple jitsi-meet
-            // dependencies including lib-jitsi-meet.
-
-            loader: 'expose-loader?$!expose-loader?jQuery',
-            test: /\/node_modules\/jquery\/.*\.js$/
-        }, {
-            // Allow CSS to be imported into JavaScript.
-
-            test: /\.css$/,
-            use: [
-                // 'css-hot-loader',
-                // MiniCssExtractPlugin.loader,
-                'style-loader',
-                'css-loader?-url&-image'
-            ]
-        }, {
-            test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
-            resolve: {
-                alias: {
-                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`
+            {
+                test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
+                resolve: {
+                    alias: {
+                        'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`
+                    }
                 }
+            },
+            {
+                test: /\/react\/features\/base\/util\/react-focus-lock-wrapper.js$/,
+                resolve: {
+                    alias: {
+                        'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
+                    }
+                }
+            },
+            {
+                test: /\.svg$/,
+                use: [
+                    {
+                        loader: '@svgr/webpack',
+                        options: {
+                            dimensions: false,
+                            expandProps: 'start'
+                        }
+                    }
+                ]
             }
-        }, {
-            test: /\/react\/features\/base\/util\/react-focus-lock-wrapper.js$/,
-            resolve: {
-                alias: {
-                    'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
-                }
-            }
-        }, {
-            test: /\.svg$/,
-            use: [ {
-                loader: '@svgr/webpack',
-                options: {
-                    dimensions: false,
-                    expandProps: 'start'
-                }
-            } ]
-        } ]
+        ]
     },
     node: {
         // Allow the use of the real filename of the module being executed. By
@@ -151,7 +165,7 @@ const config = {
         minimize
     },
     output: {
-        filename: `[name]${minimize ? '.min' : ''}.js`,
+        filename: '[name].js',
         path: `${__dirname}/build`,
         publicPath: '/libs/',
         sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
@@ -162,16 +176,29 @@ const config = {
                 analyzerMode: 'disabled',
                 generateStatsFile: true
             })
-    ].filter(Boolean).concat([
+    ]
+        .filter(Boolean)
+        .concat([
 
-    ]),
+            // new HtmlWebpackPlugin({
+            //     title: 'My App',
+            //     filename: 'index-webpack.html',
+            //     template: 'index-dev.html',
+            //     inject: false,
+            //     chunks: [ 'app-bundle' ]
+            // }),
+            new MiniCssExtractPlugin({
+                filename: '[name].css',
+                chunkFilename: '[id].css'
+            })
+
+            // new webpack.SourceMapDevToolPlugin({})
+        ]),
     resolve: {
         alias: {
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
         },
-        aliasFields: [
-            'browser'
-        ],
+        aliasFields: [ 'browser' ],
         extensions: [
             '.web.js',
 
@@ -183,17 +210,33 @@ const config = {
 };
 
 module.exports = [
+
+    // Object.assign({}, config, {
+    //     entry: {
+    //         'main-style': './css/main.scss'
+    //     }
+    // }),
     Object.assign({}, config, {
         entry: {
-            'app.css': './css/all.css'
-        }
-    }),
-    Object.assign({}, config, {
-        entry: {
-            'app.bundle': './app.js'
+            'app-bundle': './app.js'
         },
         performance: getPerformanceHints(3 * 1024 * 1024)
     }),
+
+    Object.assign({}, config, {
+        entry: {
+            'config': './config.js'
+        },
+        performance: getPerformanceHints(700 * 1024)
+    }),
+
+    Object.assign({}, config, {
+        entry: {
+            'interface_config': './interface_config.js'
+        },
+        performance: getPerformanceHints(700 * 1024)
+    }),
+
     Object.assign({}, config, {
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
@@ -220,7 +263,8 @@ module.exports = [
     }),
     Object.assign({}, config, {
         entry: {
-            'flacEncodeWorker': './react/features/local-recording/recording/flac/flacEncodeWorker.js'
+            'flacEncodeWorker':
+                './react/features/local-recording/recording/flac/flacEncodeWorker.js'
         },
         performance: getPerformanceHints(5 * 1024)
     }),
@@ -292,11 +336,15 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/') || path.startsWith('/images/')
-            || path.startsWith('/sounds/')
-            || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+    if (
+        path.startsWith('/css/')
+        || path.startsWith('/doc/')
+        || path.startsWith('/fonts/')
+        || path.startsWith('/images/')
+        || path.startsWith('/sounds/')
+        || path.startsWith('/static/')
+        || path.endsWith('.wasm')
+    ) {
         return path;
     }
 
@@ -308,11 +356,19 @@ function devServerProxyBypass({ path }) {
         return path;
     }
 
+    if (path === '/favicon.ico') {
+        return path;
+    }
+
     if (path.endsWith === 'logging_config.js') {
         return path;
     }
 
-    if (path === '/' || path.match(/^\/\w+$/)) {
+    if (path === '/') {
+        return '/libs/index-webpack.html';
+    }
+
+    if (path.match(/^\/\w+$/)) {
         return path;
     }
 
@@ -320,25 +376,27 @@ function devServerProxyBypass({ path }) {
 
     /* eslint-disable array-callback-return, indent */
 
-    if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
+    if (
+        (Array.isArray(configs) ? configs : Array(configs)).some(c => {
             if (path.startsWith(c.output.publicPath)) {
-                    if (!minimize) {
-                        // Since webpack-dev-server is serving non-minimized
-                        // artifacts, serve them even if the minimized ones are
-                        // requested.
-                        return Object.keys(c.entry).some(e => {
-                            const name = `${e}.min.js`;
+                if (!minimize) {
+                    // Since webpack-dev-server is serving non-minimized
+                    // artifacts, serve them even if the minimized ones are
+                    // requested.
+                    return Object.keys(c.entry).some(e => {
+                        const name = `${e}.min.js`;
 
-                            if (path.indexOf(name) !== -1) {
-                                // eslint-disable-next-line no-param-reassign
-                                path = path.replace(name, `${e}.js`);
+                        if (path.indexOf(name) !== -1) {
+                            // eslint-disable-next-line no-param-reassign
+                            path = path.replace(name, `${e}.js`);
 
-                                return true;
-                            }
-                        });
-                    }
+                            return true;
+                        }
+                    });
                 }
-            })) {
+            }
+        })
+    ) {
         return path;
     }
 

@@ -1,4 +1,5 @@
 /* application specific logic */
+import './css/main.scss';
 
 import 'jquery';
 import 'jquery-contextmenu';

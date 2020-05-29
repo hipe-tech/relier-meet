@@ -47,11 +47,32 @@ var interfaceConfig = {
      * jwt.
      */
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'download', 'help', 'mute-everyone',
+        'microphone',
+        'camera',
+        'closedcaptions',
+        'desktop',
+        'fullscreen',
+        'fodeviceselection',
+        'hangup',
+        'profile',
+        'info',
+        'chat',
+        'recording',
+        'livestreaming',
+        'etherpad',
+        'sharedvideo',
+        'settings',
+        'raisehand',
+        'videoquality',
+        'filmstrip',
+        'invite',
+        'feedback',
+        'stats',
+        'shortcuts',
+        'tileview',
+        'download',
+        'help',
+        'mute-everyone',
         'e2ee'
     ],
 
@@ -200,13 +221,13 @@ var interfaceConfig = {
     /**
      * If true, notifications regarding joining/leaving are no longer displayed.
      */
-    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
 
     /**
-    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
-    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
-    * being already installed is done before rendering.
-    */
+     * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+     * being already installed is done before rendering.
+     */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     /**

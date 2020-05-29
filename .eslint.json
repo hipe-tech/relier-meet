@@ -1,7 +1,0 @@
-{
-    "extends": ["eslint-config-jitsi", "prettier"],
-    "plugins": ["prettier"],
-    "rules": {
-        "prettier/prettier": ["error"]
-    }
-}
